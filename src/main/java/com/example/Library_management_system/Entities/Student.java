@@ -1,64 +1,33 @@
 package com.example.Library_management_system.Entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity //This is the schema of how Student Table will look
-@Table
+@Table(name = "student_info")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+
 public class Student {
 
      @Id
-     private int studentId;
+     @GeneratedValue(strategy = GenerationType.IDENTITY )
+     private int rollId;
 
-     private String studentName;
+     private String name;
 
-     private  Integer age;
+     private String branch;
 
-     private String courses;
+     private double cgpa;
 
      private String emailid;
 
-     public String getEmailid() {
-          return emailid;
-     }
-
-     public void setEmailid(String emailid) {
-          this.emailid = emailid;
-     }
-
-
-     public int getStudentId() {
-          return studentId;
-     }
-
-     public void setStudentId(int studentId) {
-          this.studentId = studentId;
-     }
-
-     public String getStudentName() {
-          return studentName;
-     }
-
-     public void setStudentName(String studentName) {
-          this.studentName = studentName;
-     }
-
-     public Integer getAge() {
-          return age;
-     }
-
-     public void setAge(Integer age) {
-          this.age = age;
-     }
-
-     public String getCourses() {
-          return courses;
-     }
-
-     public void setCourses(String courses) {
-          this.courses = courses;
-     }
 
 
 }
