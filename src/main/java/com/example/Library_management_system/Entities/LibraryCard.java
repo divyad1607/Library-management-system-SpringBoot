@@ -1,7 +1,7 @@
 package com.example.Library_management_system.Entities;
 
 
-import com.example.Library_management_system.CardStatus;
+import com.example.Library_management_system.Enums.CardStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
