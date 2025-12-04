@@ -13,6 +13,7 @@ public class AuthorService {
     private AuthorRepository authorRepository;
 
     public String addAuthor(Author author){
+        author.setNoOfBooks(0);
         authorRepository.save(author);
         return "Author has been save to the DB";
     }

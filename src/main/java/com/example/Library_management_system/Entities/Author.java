@@ -15,11 +15,13 @@ public class Author {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer authorId;
 
+    private String name;
+
     private Integer age;
 
-    private Integer emailId;
+    private String  emailId;
 
     private Double rating;
 
-    private Integer noOfBooks;
+    private int noOfBooks;
 }
