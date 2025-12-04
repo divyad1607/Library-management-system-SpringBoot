@@ -30,8 +30,12 @@ public class BookController {
     public String associateBookAndAuthor(@RequestParam("bookId")Integer bookId,
                                                  @RequestParam("authorId")Integer authorId) {
 
+        try{
             String result = bookService.associateBookAndAuthor(bookId,authorId);
             return result;
+        }catch (Exception e){
+            return e.getMessage();
+            }
         }
 
     @GetMapping("/getBookByAuthor")
