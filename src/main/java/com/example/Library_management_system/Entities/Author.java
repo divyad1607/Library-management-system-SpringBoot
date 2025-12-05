@@ -23,5 +23,6 @@ public class Author {
 
     private Double rating;
 
+    @Column(columnDefinition = "INT DEFAULT 0")
     private int noOfBooks;
 }
