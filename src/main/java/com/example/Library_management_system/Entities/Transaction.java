@@ -4,6 +4,7 @@ import com.example.Library_management_system.Enums.TransactionStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
@@ -20,6 +21,7 @@ public class Transaction {
     @Enumerated(value = EnumType.STRING)
     private TransactionStatus transactionStatus;
 
+    @CreationTimestamp
     private Date issueDate;
 
     private Date returnDate;

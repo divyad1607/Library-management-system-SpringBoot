@@ -17,6 +17,7 @@ import javax.sound.midi.MidiFileFormat;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class TransactionService  {
@@ -30,7 +31,9 @@ public class TransactionService  {
     @Autowired
     private TransactionRepository transactionRepository;
 
-    public static Integer MAX_NO_OF_ISSUED_BOOKS = 3;
+    public static final Integer MAX_NO_OF_ISSUED_BOOKS = 3;
+
+    public static final Integer FINE_PER_DAY = 5;
 
     public String issueBook(Integer bookId, Integer cardId) throws Exception{
 
@@ -52,7 +55,7 @@ public class TransactionService  {
         //2.LibraryCard should be valid
         Optional<LibraryCard> optionalLibraryCard = cardRepository.findById(cardId);
         if(optionalLibraryCard.isEmpty()){
-            throw new Exception("CradId entered is incorrect");
+            throw new Exception("CardId entered is incorrect");
         }
         LibraryCard card = optionalLibraryCard.get();
 
@@ -76,14 +79,19 @@ public class TransactionService  {
         }
 
         //5.Check for if the card has expired its validity
-       LocalDate currentDate = LocalDate.now();
-        if(currentDate.isAfter(card.getValidity())){
+
+
+        Long timeInMsOfCardValidity = card.getValidity().getTime();
+        Long currentTimeInMs = System.currentTimeMillis();
+
+        Long currentDate = System.currentTimeMillis();
+        if(currentTimeInMs>timeInMsOfCardValidity){
             transaction.setTransactionStatus(TransactionStatus.FAILURE);
             return "The card has been expired";
         }
 
 
-        transaction.setTransactionStatus(TransactionStatus.SUCCESS);
+        transaction.setTransactionStatus(TransactionStatus.ISSUED);
 
         book.setIsIssued(true);
         card.setNoOfBooksIssued(card.getNoOfBooksIssued()+1);
@@ -94,5 +102,41 @@ public class TransactionService  {
         transactionRepository.save(transaction);
 
         return "The transaction has been completed with transactionId" +transaction.getTransactionId();
+    }
+
+    public String returnBook(Integer bookId,Integer cardId){
+
+        //I need to find out the transactions : with that bookId, cardId and ISSUED status
+
+        Book book = bookRepository.findById(bookId).get();
+        LibraryCard card = cardRepository.findById(cardId).get();
+
+        Transaction transaction = transactionRepository.findTransactionByBookAndCardAndTransactionStatus(book,card,TransactionStatus.ISSUED);
+        //Fine amount to be calculated :
+        Long timeDifferenceInMs = System.currentTimeMillis() - transaction.getIssueDate().getTime();
+
+        //This time is in MS, we need to convert this to days
+        Long days = TimeUnit.DAYS.convert(timeDifferenceInMs,TimeUnit.MILLISECONDS);
+
+        Integer fineAmt = 0;
+
+        if(days>15)
+            fineAmt = Math.toIntExact((days-15)*FINE_PER_DAY);
+
+
+        //Save the transaction
+        transaction.setFineAmount(fineAmt);
+        transaction.setTransactionStatus(TransactionStatus.COMPLETED);
+        transaction.setReturnDate(new Date());
+        book.setIsIssued(Boolean.FALSE);
+        card.setNoOfBooksIssued(card.getNoOfBooksIssued()-1);
+
+        transactionRepository.save(transaction);
+        cardRepository.save(card);
+        bookRepository.save(book);
+
+        return "The book has been successfully returned";
+
+
     }
 }
