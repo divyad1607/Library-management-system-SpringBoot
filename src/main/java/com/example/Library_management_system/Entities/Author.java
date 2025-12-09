@@ -25,4 +25,13 @@ public class Author {
 
     @Column(columnDefinition = "INT DEFAULT 0")
     private int noOfBooks;
+
+    public Author(Integer authorId, int noOfBooks) {
+        this.authorId = authorId;
+        this.noOfBooks = noOfBooks;
+    }
 }
+
+
+
+
